@@ -1,0 +1,41 @@
+version: "3"
+services:
+  miservicio_mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: m14
+      MYSQL_ROOT_PASSWORD: m14
+      MYSQL_USER: m14
+      MYSQL_PASSWORD: m14
+    volumes:
+      # Montamos un volumen para MySQL para no perder los datos de bd
+      - ./volumenes/mysql:/var/lib/mysql
+      - ./bbdd.sql:/docker-entrypoint-initdb.d/bbdd.sql
+      
+    command: --init-file /docker-entrypoint-initdb.d/bbdd.sql
+
+    expose:
+      - 3306
+    ports:
+      - 3306:3306
+       
+  miservicio_php:
+    image: php:7-apache
+    volumes:
+      # Montamos nuestra web desde fuera en el directorio web del contenedor
+      - ./miweb/:/var/www/html
+      - ./otrobackup/:/home/m14
+    expose:
+      - 80
+    ports:
+      - 80:80
+
+ 
+    links: 
+      - miservicio_mysql
+  
+  adminer:
+   image: adminer
+   ports:
+    - 8000:8080
+

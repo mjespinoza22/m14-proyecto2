@@ -1,0 +1,82 @@
+-- Crear la base de datos "universitat"
+CREATE DATABASE IF NOT EXISTS universitat;
+USE universitat;
+
+-- Crear la tabla PERSONA
+CREATE TABLE PERSONA (
+    DNI VARCHAR(20) PRIMARY KEY,
+    Nom VARCHAR(50),
+    Cognom VARCHAR(50),
+    Direccio VARCHAR(100)
+);
+
+-- Crear la tabla PROFESSOR
+CREATE TABLE PROFESSOR (
+    DNI VARCHAR(20) PRIMARY KEY,
+    FOREIGN KEY (DNI) REFERENCES PERSONA(DNI)
+);
+
+-- Crear la tabla ASSIGNATURA
+CREATE TABLE ASSIGNATURA (
+    Codi VARCHAR(20) PRIMARY KEY,
+    Nom VARCHAR(100)
+);
+
+-- Crear la tabla BICICLETA
+CREATE TABLE BICICLETA (
+    ID INT PRIMARY KEY
+);
+
+-- Crear la tabla ESTUDIANT
+CREATE TABLE ESTUDIANT (
+    DNI VARCHAR(20) PRIMARY KEY,
+    DataNaixement DATE,
+    NumExpedient INT,
+    IDBicicleta INT,
+    Inici DATE,
+    Final DATE,
+    FOREIGN KEY (DNI) REFERENCES PERSONA(DNI),
+    FOREIGN KEY (IDBicicleta) REFERENCES BICICLETA(ID)
+);
+
+-- Crear la tabla CLASSE
+CREATE TABLE CLASSE (
+    ID INT PRIMARY KEY
+);
+
+-- Crear la tabla IMPARTEIX
+CREATE TABLE IMPARTEIX (
+    DNIProfessor VARCHAR(20),
+    CodiAssignatura VARCHAR(20),
+    PRIMARY KEY (DNIProfessor, CodiAssignatura),
+    FOREIGN KEY (DNIProfessor) REFERENCES PROFESSOR(DNI),
+    FOREIGN KEY (CodiAssignatura) REFERENCES ASSIGNATURA(Codi)
+);
+
+-- Crear la tabla MATRICULA
+CREATE TABLE MATRICULA (
+    DNIEstudiant VARCHAR(20),
+    CodiAssignatura VARCHAR(20),
+    Data DATE,
+    PRIMARY KEY (DNIEstudiant, CodiAssignatura, Data),
+    FOREIGN KEY (DNIEstudiant) REFERENCES ESTUDIANT(DNI),
+    FOREIGN KEY (CodiAssignatura) REFERENCES ASSIGNATURA(Codi)
+);
+
+-- Crear la tabla PRESIDENT
+CREATE TABLE PRESIDENT (
+    DNIEstudiant VARCHAR(20),
+    DNIPresident VARCHAR(20),
+    IDClasse INT,
+    PRIMARY KEY (DNIEstudiant, DNIPresident, IDClasse),
+    FOREIGN KEY (DNIEstudiant) REFERENCES ESTUDIANT(DNI),
+    FOREIGN KEY (DNIPresident) REFERENCES ESTUDIANT(DNI),
+    FOREIGN KEY (IDClasse) REFERENCES CLASSE(ID)
+);
+
+
+
+-- Crear el usuario administrador "m14" con contraseña "m14"
+CREATE USER IF NOT EXISTS 'm14'@'%' IDENTIFIED BY 'm14';
+GRANT ALL PRIVILEGES ON *.* TO 'm14'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
